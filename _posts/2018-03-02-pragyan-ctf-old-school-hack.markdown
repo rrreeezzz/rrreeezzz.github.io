@@ -6,7 +6,7 @@ categories: "CTF"
 comments: true
 ---
 
-I played [Pragyan CTF](https://ctf.pragyan.org/home) for a few challenges and I thought the "Old School Hack" challenge should be great for a first post.
+I played [Pragyan CTF](https://ctf.pragyan.org/home) for a few challenges and I thought the "Old School Hack" challenge would be great for a first post.
 
 Gatheting information
 ---------------------
@@ -16,7 +16,7 @@ The challenge is running at 28.199.224.175:13000, but it also comes with a binar
 └───▶ file police_academy
 police_academy: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=db4dffbb6fd12d16c55cab166d1d1a9698374b5f, not stripped
 {% endhighlight %}
-The **file** command inform us that this binary is an ELF for x86-64 architectures, that it's dynamically linked and most importantly that it's not stripped so it should be easier to disassemble.
+The **file** command informs us that this binary is an ELF for x86-64 architectures, that it's dynamically linked and most importantly that it's not stripped so it should be easier to disassemble.
 
 Then comes the obvious **strings** command, which will give us useful information:
 {% highlight html %}
@@ -97,7 +97,7 @@ I used radare2 + cutter as a GUI (which is very cool to use) to disassemble the 
 0x00400abe           cmp  eax, 7                                      ; 7
 0x00400ac1           ja   0x400cb8
 {% endhighlight %}
-Our second input is *rbp - 0x48* in the stack and is compared to 7 which is the number of options. If above (ja), it jumps to 0x400cb8. I thought in first place that it was the end of the main function. But nop, just before a function called **print_record**.
+Our second input is *rbp - 0x48* in the stack and is compared to 7 which is the number of options. If above (ja), it jumps to 0x400cb8. I thought in the first place that it was the end of the main function. But nope, just before a function called **print_record**.
 
 Just after the jump, there is another jump and 6 times the almost same code pattern.
  {% highlight nasm %}
@@ -118,15 +118,15 @@ Just after the jump, there is another jump and 6 times the almost same code patt
  0x00400b15           mov  byte [rax + 0x24], 0
  0x00400b19           jmp  0x400cb8
 {% endhighlight %}
-The first three lines will jump to one of these pattern, for instance to 0x00400ad3 if we choose the first option. It clearly constructs a string which is placed just after our first input in the stack... Seems like a buffer overflow exploitation. This is in little endian so the string is:
+The first three lines will jump to one of these patterns, for instance to 0x00400ad3 if we choose the first option. It clearly constructs a string which is placed just after our first input in the stack... Seems like a buffer overflow exploitation. This is in little endian so the string is:
  {% highlight html %}
 0x3037303838356132 + 0x3566356538656130 + 0x6339666439616331 + 0x6436353334346135 + 0x7461642e =
 38303730326135386535663530616538646639633163613933353664356134342E646174 =
 80702a58e5f50ae8df9c1ca9356d5a44.dat
 {% endhighlight %}
-It also add a null byte at the end, to terminate the string (0x00400b15). Then, it jumps just before **print_record** again.
+It also adds a null byte at the end, to terminate the string (0x00400b15). Then, it jumps just before **print_record** again.
 
-A quick look at this function seems to show that it first checks the lenght of a string (the one it just constructs?), compare it to 36 (0x24) (which is the size of the constructed string again), and if it's not equal quit the function. Otherwise it will try to open the file and print what's inside (**fopen** and **fread**).
+A quick look at this function seems to show that it first checks the lenght of a string (the one it just constructed?), compares it to 36 (0x24) (which is the size of the constructed string again), and if it's not equal quits the function. Otherwise it will try to open the file and print what's inside (**fopen** and **fread**).
 
 For the option 7, it constructs the string "flag.txt". We can now easily assume that the flag is in this file.
 
@@ -150,7 +150,7 @@ arg[1]: 0x400d98 --> 0x72 ('r')
 {% endhighlight %}
 Yep, looks like it will try to open *2a5880700ae8e5f51ca9df9c5a44356d.dat*. I created a file with this name and some random characters in it and yes it opens and outputs it.
 
-We also want to give a look on how where the string is placed in the stack.  Let's set a breakpoint before the call to **print_record** in the **main** function:
+We also want to give a look on how and where the string is placed in the stack.  Let's set a breakpoint before the call to **print_record** in the **main** function:
 {% highlight nasm %}
 [------------------------------------stack-------------------------------------]
 0000| 0x7fffffffdff0 --> 0x0
