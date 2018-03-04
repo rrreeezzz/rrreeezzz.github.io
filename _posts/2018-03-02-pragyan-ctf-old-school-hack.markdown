@@ -148,7 +148,7 @@ Guessed arguments:
 arg[0]: 0x7fffffffe010 ("2a5880700ae8e5f51ca9df9c5a44356d.dat")
 arg[1]: 0x400d98 --> 0x72 ('r')
 {% endhighlight %}
-Yep, looks like it will try to open *2a5880700ae8e5f51ca9df9c5a44356d.dat*. I created a file with this name and some random characters in it and yes it open and output it.
+Yep, looks like it will try to open *2a5880700ae8e5f51ca9df9c5a44356d.dat*. I created a file with this name and some random characters in it and yes it opens and outputs it.
 
 We also want to give a look on how where the string is placed in the stack.  Let's set a breakpoint before the call to **print_record** in the **main** function:
 {% highlight nasm %}
@@ -163,7 +163,7 @@ We also want to give a look on how where the string is placed in the stack.  Let
 0056| 0x7fffffffe028 ("5a44356d.dat")
 [------------------------------------------------------------------------------]
 {% endhighlight %}
-Folowing our first input, we have the name of the file to open. And note that the **print_record** function read the same string at the same address (0x7fffffffe010).
+Following our first input, we have the name of the file to open. And note that the **print_record** function read the same string at the same address (0x7fffffffe010).
 
 It's now easy to think of a potential payload:
 
