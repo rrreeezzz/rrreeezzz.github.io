@@ -9,7 +9,7 @@ I'm a student in cybersecurity, and I heard that a blog where you post stuff you
 Sometimes I play CTF, [RootMe](https://www.root-me.org/?), or [HackTheBox](https://www.hackthebox.eu/).
 Sometimes I [tweet](https://twitter.com/rrr333zzz).
 
-This website use [Jekyll](https://github.com/jekyll) with the [minima](https://github.com/jekyll/minima) theme.
+This website uses [Jekyll](https://github.com/jekyll) with the [minima](https://github.com/jekyll/minima) theme.
 
 Send me an email: malbois.fabien@gmail.com
 
