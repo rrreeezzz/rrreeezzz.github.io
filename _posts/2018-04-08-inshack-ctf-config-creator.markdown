@@ -6,7 +6,7 @@ categories: "CTF"
 comments: true
 ---
 
-As I'm currently into pwning things, I tried the pwn category at the Ins'hack CTF. And frankly, I really enjoyed spend time on their challenges. The first one was Config Creator. It was supposed to be hard, but had most validations than the other.
+As I'm currently into pwning things, I tried the pwn category at the Ins'hack CTF. And frankly, I really enjoyed spending time on their challenges. The first one was Config Creator. It was supposed to be hard, but had more validations than the others.
 > I've just written a small utility to create a config file (which are sooo painful to write by han, right?).
 
 > Care to have a look?
@@ -135,7 +135,7 @@ I didn't know what was that, **f-string**. A quick look at google and I landed o
 >>> f'Hello {a} ABCD'
 'Hello 1337 ABCD'
 ```
-At this point it's almost sure that we'll have to exploit it. Let's try to:
+At this point it's almost certain that we'll have to exploit it. Let's try to:
 ```
 └───▶ python -c "print('1\na\nabc\n1\nprint(a)\nprint(a)\n3\n4\n6\n')" | nc config-creator.ctf.insecurity-insa.fr 10000
 Welcome to the config creator!

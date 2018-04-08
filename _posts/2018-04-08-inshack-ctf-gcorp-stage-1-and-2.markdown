@@ -17,7 +17,7 @@ Stage 1
 >Even if the job seems risky you can't help it, you wanna look at it...
 >the adventure begins...
 
-The first stage is the only challenge of the networking category. It starts with a pcap file, which obviously I opened with Wireshark. Nothing really interesting in terms of packets or streams, just some ARP and a long TCP stream which we can follow. At first sight, it seemed like junk data and I rapidly went through the entire stream to land on what appears to be a base64 string:
+The first stage is the only challenge of the networking category. It starts with a pcap file, which obviously I opened with Wireshark. Nothing really interesting in terms of packets or streams, just some ARP and a long TCP stream which we can follow. At first sight, it seemed like junk data and I rapidly went through the entire stream to land on what appeared to be a base64 string:
 
 ![base64 string]({{ "/assets/inshackTcpStream.png" | absolute_url }})
 And decoded, it gaves us the flag for the first stage:
@@ -41,7 +41,7 @@ In this part, there was just a URL given that said:
 After trying some POST requests, I had errors but nothing much to drive me on the correct path. As mentioned in the description, I decided to give a closer look at the first stage and the TCP stream. And yes, there was more information in it:
 
 ![random test]({{ "/assets/inshackRandomText.png" | absolute_url }})
-Some text, but I did try to find a 12142 port open on multiple URL (gcorp-stage-2.ctf.insecurity-insa.fr...) but nope, wasn't this.
+This text was inside the data, and I did try to find a port 12142 open on multiple URL (gcorp-stage-2.ctf.insecurity-insa.fr...) but nope, wasn't this.
 
 ![ELF start]({{ "/assets/inshackELFStart.png" | absolute_url }})
 Here we got the beginning of an ELF binary. This is more promising. The next step was to extract this binary from the pcap file. After saving the stream with Wireshark, I used the hexadecimal editor Bless to cut the uneeded part. As a result, we had a perfect binary:
@@ -52,8 +52,8 @@ test: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked
 When launched, it waits for input and I rapidly recognized the same errors I had with the POST requests. Surely this was the program handling the POST requests. The next step was to disassemble it to see what kind of data it waits for. The **main** function had a call to a **dna_to_bin** that also had a call to **d2b**.
 >**main** -> **dna_to_bin** -> **d2b**
 
-+ **dna_to_bin**: check if the input data is a multiple of 4. If so; iterate through the data 4 by 4 bytes and call **d2b** each time with these 4 bytes.
-+ **d2b**: iterates through the 4 bytes and check if these bytes are equal to A, C, G or T (I know this group of letters was related to DNA because of the movie Gattaca). If not, it gaves us the other error we found with the POST requests: "DNA data contains a unknown character!". Otherwise it calculates a byte based on the 4 bytes sequences, and stores it into a global variable *godat*.
++ **dna_to_bin**: checks if the input data is a multiple of 4. If so; iterates through the data 4 by 4 bytes and calls **d2b** each time with these 4 bytes.
++ **d2b**: iterates through the 4 bytes and checks if these bytes are equal to A, C, G or T (I know this group of letters was related to DNA because of the movie Gattaca). If not, it gaves us the other error we found with the POST requests: "DNA data contains a unknown character!". Otherwise it calculates a byte based on the 4 bytes sequences, and stores it into a global variable *godat*.
 
 At this point I knew what the program was waiting for. For the same 4 bytes sequence it resulted in the same output. For example "CCCC" was "U", "CCCA" was "T"... Thus it was possible to generate any byte.
 
@@ -100,7 +100,7 @@ Yep, the command had effectivly been overwritten.
 
 Therefore, the plan was to write a script that:
 + Takes a command in argument.
-+ For each byte in this command, find the right combination with the program.
++ For each byte in this command, finds the right combination with the program.
 + Sends 4\*128=512 bytes to go through *godat* and 512 other bytes that start with the combination for the command.
 
 There it is:
