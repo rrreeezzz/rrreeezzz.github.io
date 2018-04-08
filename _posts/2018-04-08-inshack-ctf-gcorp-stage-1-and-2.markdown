@@ -25,7 +25,7 @@ And decoded, it gaves us the flag for the first stage:
 └───▶ echo "SU5TQXtjMTgwN2EwYjZkNzcxMzI3NGQ3YmYzYzY0Nzc1NjJhYzQ3NTcwZTQ1MmY3N2I3ZDIwMmI4MWUxNDkxNzJkNmE3fQ==" | base64 -d
 INSA{c1807a0b6d7713274d7bf3c6477562ac47570e452f77b7d202b81e149172d6a7}
 ```
-Nothing tough but the funnier part is following.
+Nothing too complicated but the funnier part is following.
 
 Stage 2
 ---------------------
@@ -38,10 +38,10 @@ Stage 2
 In this part, there was just a URL given that said:
 >... POST valid DNA data (input limited to 1024 bytes)
 
-After trying some post request, I had errors but nothing much to drive me on the correct path. As mentioned in the description, I decided to give a closer look at the first stage and the TCP stream. And yes, there was more information in it:
+After trying some POST requests, I had errors but nothing much to drive me on the correct path. As mentioned in the description, I decided to give a closer look at the first stage and the TCP stream. And yes, there was more information in it:
 
 ![random test]({{ "/assets/inshackRandomText.png" | absolute_url }})
-Some text, but I did try to find a 12142 port open on multiple URL (gcorp-stage-2.ctf.insecurity-insa.fr...) but nop, wasn't this.
+Some text, but I did try to find a 12142 port open on multiple URL (gcorp-stage-2.ctf.insecurity-insa.fr...) but nope, wasn't this.
 
 ![ELF start]({{ "/assets/inshackELFStart.png" | absolute_url }})
 Here we got the beginning of an ELF binary. This is more promising. The next step was to extract this binary from the pcap file. After saving the stream with Wireshark, I used the hexadecimal editor Bless to cut the uneeded part. As a result, we had a perfect binary:
@@ -55,9 +55,9 @@ When launched, it waits for input and I rapidly recognized the same errors I had
 + **dna_to_bin**: check if the input data is a multiple of 4. If so; iterate through the data 4 by 4 bytes and call **d2b** each time with these 4 bytes.
 + **d2b**: iterates through the 4 bytes and check if these bytes are equal to A, C, G or T (I know this group of letters was related to DNA because of the movie Gattaca). If not, it gaves us the other error we found with the POST requests: "DNA data contains a unknown character!". Otherwise it calculates a byte based on the 4 bytes sequences, and stores it into a global variable *godat*.
 
-At this point I knew what was the program waiting for. For the same 4 bytes sequence it resulted in the same output. For example "CCCC" was "U", "CCCA" was "T"... Thus it was possible to generate any byte.
+At this point I knew what the program was waiting for. For the same 4 bytes sequence it resulted in the same output. For example "CCCC" was "U", "CCCA" was "T"... Thus it was possible to generate any byte.
 
-There also was an interesting call to **system** at the end of **main**. By setting a breakpoint on it I was able to see what argument the function took:
+There also was an interesting call to **system** at the end of **main**. By setting a breakpoint on it I was able to see what argument the function takes:
 ```nasm
 [-------------------------------------code-------------------------------------]
    0x555555554a76 <main+216>:	mov    edi,0x1
@@ -71,7 +71,7 @@ There also was an interesting call to **system** at the end of **main**. By sett
 Guessed arguments:
 arg[0]: 0x5555557550c0 ("echo $(date) > /tmp/dna.log")
 ```
-Hmm, "echo $(date) > /tmp/dna.log" which is stored in the global variable *gcmd*. This variable was stored between two other global variables: *gidat* and *godat*.
+Hmm, "echo $(date) > /tmp/dna.log" is the argument string for system, which is stored in the global variable *gcmd*. This variable was stored between two other global variables: *gidat* and *godat*.
 ```nasm
 gdb-peda$ x/30dx 0x5555557550c0 - 0x40
 0x555555755080 <godat+64>:	0x0000000000000000	0x0000000000000000
@@ -99,9 +99,9 @@ UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
 Yep, the command had effectivly been overwritten.
 
 Therefore, the plan was to write a script that:
-+ Take a command in argument.
++ Takes a command in argument.
 + For each byte in this command, find the right combination with the program.
-+ Send 4*128=512 bytes to go through *godat* and 512 other bytes that start with the combination for the command.
++ Sends 4\*128=512 bytes to go through *godat* and 512 other bytes that start with the combination for the command.
 
 There it is:
 {% highlight python linenos %}
