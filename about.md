@@ -5,7 +5,7 @@ permalink: /about/
 order: 1
 ---
 
-I'm a student in cybersecurity, and I heard that a blog where you post stuff you do is good to get a job.
+I'm a student in cybersecurity, and I created this blog to improve my written english but also to make sure I understand topics to better explain them.
 Sometimes I play CTF, [RootMe](https://www.root-me.org/?), or [HackTheBox](https://www.hackthebox.eu/).
 Sometimes I [tweet](https://twitter.com/rrr333zzz).
 
