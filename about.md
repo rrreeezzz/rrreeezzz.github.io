@@ -5,9 +5,8 @@ permalink: /about/
 order: 1
 ---
 
-I'm a student in cybersecurity, and I created this blog to improve my written english but also to make sure I understand topics to better explain them.
-Sometimes I play CTF, [RootMe](https://www.root-me.org/?), or [HackTheBox](https://www.hackthebox.eu/).
-Sometimes I [tweet](https://twitter.com/rrr333zzz).
+I like stuff, and I created this blog to improve my written english but also to make sure I understand topics to better explain them.
+Sometimes I play CTF, sometimes I code, bust most of the time I don't know what to do.
 
 This website uses [Jekyll](https://github.com/jekyll) with the [minima](https://github.com/jekyll/minima) theme.
 
