@@ -25,9 +25,6 @@ github_username:  rrreeezzz
 disqus:
   shortname: rrreeezzz-github-io
 
-#GA just for fun
-#google_analytics: UA-115066439-1
-
 # Build settings
 markdown: kramdown
 theme: minima
